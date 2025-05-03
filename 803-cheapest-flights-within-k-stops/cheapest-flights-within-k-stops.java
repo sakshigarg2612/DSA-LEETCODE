@@ -1,15 +1,15 @@
-class Pair{
+class Destination{
     int stops,node,dist;
-    public Pair(int s, int n, int d)
+    public Destination(int s, int n, int d)
     {
         this.stops =s;
         this.node = n;
         this.dist = d;
     }
 }
-class Tuple{
+class Edge{
     int node, dist;
-    public Tuple(int node,int dist)
+    public Edge(int node,int dist)
     {
         this.node = node;
         this.dist = dist;
@@ -17,34 +17,34 @@ class Tuple{
 }
 class Solution {
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
-        List<List<Tuple>> adj = new ArrayList<>();
+        List<List<Edge>> adj = new ArrayList<>();
         for(int i=0;i<n;i++) adj.add(new ArrayList<>());
 
         for(int[] flight:flights)
-        adj.get(flight[0]).add(new Tuple(flight[1],flight[2]));
+        adj.get(flight[0]).add(new Edge(flight[1],flight[2]));
 
-        int[] jour = new int[n];
-        Arrays.fill(jour,Integer.MAX_VALUE);
-        jour[src] = 0;
+        int[] path = new int[n];
+        Arrays.fill(path,Integer.MAX_VALUE);
+        path[src] = 0;
 
-        Queue<Pair> q = new LinkedList<>();
-        q.offer(new Pair(0,src,0));
+        Queue<Destination> q = new LinkedList<>();
+        q.offer(new Destination(0,src,0));
 
         while(!q.isEmpty())
         {
-            Pair curr = q.poll();
+            Destination curr = q.poll();
             int stops = curr.stops, node = curr.node,dist = curr.dist;
-            for(Tuple edge:adj.get(node))
+            for(Edge Destination:adj.get(node))
             {
-                int v = edge.node, w = edge.dist;
+                int v = Destination.node, w = Destination.dist;
                 if(stops>k) break;
-                if(jour[v] > dist + w)
+                if(path[v] > dist + w)
                 {
-                    jour[v] = dist + w;
-                    q.offer(new Pair(stops+1,v,jour[v]));
+                    path[v] = dist + w;
+                    q.offer(new Destination(stops+1,v,path[v]));
                 }
             }
         }
-        return jour[dst] == Integer.MAX_VALUE ? -1 : jour[dst];
+        return path[dst] == Integer.MAX_VALUE ? -1 : path[dst];
     }
 }
