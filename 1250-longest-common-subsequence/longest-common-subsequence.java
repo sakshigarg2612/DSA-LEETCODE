@@ -14,19 +14,14 @@ class Solution {
             return 0;
         }
         if(dp[i][j]!=-1) return dp[i][j];
-        if (i == 0 || j == 0) {
-            if (text1.charAt(i) == text2.charAt(j)) {
-                return 1;
-            }
+        if (text1.charAt(i) == text2.charAt(j)) {
+            return helper(i - 1, j - 1, text1, text2,dp) + 1;
         }
         if (i == 0 && j != 0) {
             return helper(i, j - 1, text1, text2,dp);
         }
         if (i != 0 && j == 0) {
             return helper(i-1, j, text1, text2,dp);
-        }
-        if (text1.charAt(i) == text2.charAt(j)) {
-            return helper(i - 1, j - 1, text1, text2,dp) + 1;
         }
         int move1 = helper(i - 1, j, text1, text2,dp);
         int move2 = helper(i, j - 1, text1, text2,dp);
