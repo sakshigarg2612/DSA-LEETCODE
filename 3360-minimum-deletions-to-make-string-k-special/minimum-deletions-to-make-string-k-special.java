@@ -1,27 +1,40 @@
 class Solution {
     public int minimumDeletions(String word, int k) {
-        HashMap<Character, Integer> freq = new HashMap<>();
-        HashSet<Character> set = new HashSet<>();
-        for(int i=0;i < word.length();i++) {
-            Character ch =word.charAt(i);
-            freq.put(ch, freq.getOrDefault(ch,0) +1);
-            set.add(ch);
-        }
-        int minDeletions = word.length();
-        for(Character ch : set) {
-            int del =0;
-            for(Map.Entry<Character,Integer> entry : freq.entrySet()) {
-                if(entry.getValue() < freq.get(ch)) {
-                    del = del + entry.getValue();
-                } else if (entry.getValue() > freq.get(ch)) {
-                    if(entry.getValue() - freq.get(ch) >k) {
-                        del = del+ entry.getValue() - freq.get(ch) -k;
-                    }
-                }
-            }
-            minDeletions = Math.min(minDeletions,del);
+        Map<Character, Integer> freqMap = new HashMap<>();
+        for (char c : word.toCharArray()) {
+            freqMap.put(c, freqMap.getOrDefault(c, 0) + 1);
         }
 
-        return minDeletions;
+        List<Integer> freqs = new ArrayList<>(freqMap.values());
+        Collections.sort(freqs);
+
+        int n = freqs.size();
+        int[] prefixSum = new int[n];
+        prefixSum[0] = freqs.get(0);
+        for (int i = 1; i < n; i++) {
+            prefixSum[i] = prefixSum[i - 1] + freqs.get(i);
+        }
+
+        int result = Integer.MAX_VALUE;
+
+        for (int i = 0; i < n; i++) {
+            int base = freqs.get(i);
+            int hi = base + k;
+
+            // All frequencies < base are deleted completely → prefixSum[i - 1]
+            int delLow = (i > 0) ? prefixSum[i - 1] : 0;
+
+            // All frequencies > hi are reduced to hi
+            int delHigh = 0;
+            for (int j = i + 1; j < n; j++) {
+                if (freqs.get(j) > hi) {
+                    delHigh += freqs.get(j) - hi;
+                }
+            }
+
+            result = Math.min(result, delLow + delHigh);
+        }
+
+        return result;
     }
 }
