@@ -12,12 +12,13 @@ class Solution {
             return 0;
         }
         if(dp[index][prev+1]!=-1) return dp[index][prev+1];
-        int notTake = helper(index+1,nums,prev,dp);
+
         // take
         int take =0;
         if(prev==-1 || (prev !=-1 && nums[prev]<nums[index])) {
             take = helper(index+1,nums,index,dp)+1;
         } 
+                int notTake = helper(index+1,nums,prev,dp);
         return dp[index][prev+1]=Math.max(take, notTake);
     }
 }
