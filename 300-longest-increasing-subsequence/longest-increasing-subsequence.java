@@ -1,17 +1,20 @@
 class Solution {
     public int lengthOfLIS(int[] nums) {
-        int dp[] = new int[nums.length];
-        Arrays.fill(dp,1);
-        int maxi= 1;
-        for (int i =1; i < nums.length; i++) {
-            for (int prev = 0; prev <i; prev++) {
-                if(nums[i] > nums[prev] && dp[i]<(1+dp[prev])) {
-                    dp[i] = 1+ dp[prev];
-                }
-            }
-            maxi = Math.max(maxi, dp[i]);
+        Integer dp[][] = new Integer[nums.length][nums.length+1];
+     return lis(0,nums,-1,dp);
+    }
+
+    int lis(int index, int[] nums,int prev,Integer[][] dp) {
+        if(index == nums.length) {
+            return 0;
         }
-        return maxi;
+        if(dp[index][prev+1]!=null) return dp[index][prev+1];
+        int notTake = lis(index+1,nums,prev,dp);
+        int take =0;
+        if(prev==-1 || nums[index]>nums[prev]) {
+           take= lis(index+1,nums, index,dp)+1;
+        }
+        return dp[index][prev+1]=Math.max(take,notTake);
     }
 
 }
