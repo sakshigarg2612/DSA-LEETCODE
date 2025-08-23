@@ -10,24 +10,36 @@ class Solution {
     }
 
     public List<String> topKFrequent(String[] words, int k) {
-        PriorityQueue<Pair> pq = new PriorityQueue<>((a, b) -> {
-            if (b.freq - a.freq == 0) {
-                return a.word.compareTo(b.word);
-            }
-            return b.freq - a.freq;
-        });
-        HashMap<String, Integer> map = new HashMap<>();
+        Map<String, Integer> freqMap = new HashMap<>();
         for (String word : words) {
-            map.put(word, map.getOrDefault(word, 1) + 1);
+            freqMap.put(word, freqMap.getOrDefault(word, 0) + 1);
         }
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            pq.offer(new Pair(entry.getKey(), entry.getValue()));
+
+        // Step 2: MinHeap of size k
+        PriorityQueue<Map.Entry<String, Integer>> pq =
+            new PriorityQueue<>((a, b) -> {
+                if (a.getValue().equals(b.getValue())) {
+                    // Reverse lex order for min-heap
+                    return b.getKey().compareTo(a.getKey());
+                }
+                // Lower frequency at top
+                return a.getValue() - b.getValue();
+            });
+
+        // Step 3: Push entries, maintain heap size k
+        for (Map.Entry<String, Integer> entry : freqMap.entrySet()) {
+            pq.offer(entry);
+            if (pq.size() > k) {
+                pq.poll();
+            }
         }
+
+        // Step 4: Build result in reverse order
         List<String> result = new ArrayList<>();
-        while (k > 0 && !pq.isEmpty()) {
-            result.add(pq.poll().word);
-            k--;
+        while (!pq.isEmpty()) {
+            result.add(pq.poll().getKey());
         }
+        Collections.reverse(result);
         return result;
     }
 }
