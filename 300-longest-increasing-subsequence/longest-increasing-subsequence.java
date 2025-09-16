@@ -1,20 +1,21 @@
 class Solution {
     public int lengthOfLIS(int[] nums) {
-        Integer dp[][] = new Integer[nums.length][nums.length+1];
-     return lis(0,nums,-1,dp);
+        int[][] dp=new int[nums.length+1][nums.length+1];
+        for(int[] row : dp) {
+            Arrays.fill(row,-1);
+        }
+        return backTrack(0, nums, -1,dp);
     }
 
-    int lis(int index, int[] nums,int prev,Integer[][] dp) {
-        if(index == nums.length) {
+    int backTrack(int index, int[] nums, int prev,int[][] dp) {
+        if (index == nums.length)
             return 0;
+        if(dp[index][prev+1]!=-1) return dp[index][prev+1];
+        int take = 0;
+        if (prev == -1 || nums[prev] < nums[index]) {
+            take = 1 + backTrack(index + 1, nums, index,dp);
         }
-        if(dp[index][prev+1]!=null) return dp[index][prev+1];
-        int notTake = lis(index+1,nums,prev,dp);
-        int take =0;
-        if(prev==-1 || nums[index]>nums[prev]) {
-           take= lis(index+1,nums, index,dp)+1;
-        }
-        return dp[index][prev+1]=Math.max(take,notTake);
+        int notTake = backTrack(index + 1, nums, prev,dp);
+        return dp[index][prev+1]=Math.max(notTake, take);
     }
-
 }
