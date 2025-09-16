@@ -1,17 +1,17 @@
 class Solution {
     public int lengthOfLIS(int[] nums) {
-        int[][] dp = new int[nums.length + 1][nums.length + 1];
-        for (int index = nums.length - 1; index >= 0; index--) {
-            for (int prev = index - 1; prev >= -1; prev--) {
-                int take = 0;
-                if (prev == -1 || nums[prev] < nums[index]) {
-                    take = 1 + dp[index + 1][index+1];
+        int dp[] = new int[nums.length];
+        Arrays.fill(dp,1);
+        int result= 1;
+        for(int index=0;index<nums.length;index++) {
+            for(int prev=0; prev <index;prev++) {
+                if(nums[prev] < nums[index]) {
+                    dp[index]= Math.max(dp[index], 1+dp[prev]);
                 }
-                int notTake = dp[index + 1][prev+1];
-                dp[index][prev + 1] = Math.max(notTake, take);
             }
+            result= Math.max(result,dp[index]);
         }
-        return dp[0][0];
+        return result;
     }
 
 }
