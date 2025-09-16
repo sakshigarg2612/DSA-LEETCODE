@@ -1,40 +1,40 @@
 class Solution {
     public String[] spellchecker(String[] wordlist, String[] queries) {
-        HashSet<String> set = new HashSet<>(Arrays.asList(wordlist));
-        HashMap<String,List<String>> map = new HashMap<>();
-        for(String word : wordlist) {
-            map.put(refineWord(word), new ArrayList<>());
+        Set<String> exactWords = new HashSet<>(Arrays.asList(wordlist));
+        Map<String, String> caseInsensitive = new HashMap<>();
+        Map<String, String> vowelInsensitive = new HashMap<>();
+        
+        for (String word : wordlist) {
+            String lower = word.toLowerCase();
+            caseInsensitive.putIfAbsent(lower, word);
+            vowelInsensitive.putIfAbsent(devowel(lower), word);
         }
-        for(String word : wordlist) {
-            List<String> list= map.get(refineWord(word));
-            list.add(word);
-            map.put(refineWord(word), list);
-        }
-        for(int i=0;i <queries.length;i++) {
-            if(!set.contains(queries[i])) {
-                String w= refineWord(queries[i]);
-                if(!map.containsKey(w)) {
-                    queries[i]= "";
+        
+        String[] result = new String[queries.length];
+        for (int i = 0; i < queries.length; i++) {
+            String query = queries[i];
+            if (exactWords.contains(query)) {
+                result[i] = query; // exact match
+            } else {
+                String lower = query.toLowerCase();
+                if (caseInsensitive.containsKey(lower)) {
+                    result[i] = caseInsensitive.get(lower);
                 } else {
-                    boolean flag= false;
-                    for(String w1 : wordlist) {
-                        if((queries[i].toLowerCase()).equals(w1.toLowerCase())) {
-                            queries[i]=w1;
-                            flag = true;
-                            break;
-                        }
-                    }
-                    queries[i] = flag?queries[i] : map.get(w).get(0);
+                    String devowel = devowel(lower);
+                    result[i] = vowelInsensitive.getOrDefault(devowel, "");
                 }
             }
         }
-        return queries;
+        return result;
     }
 
-    String refineWord(String word) {
-        word= word.toLowerCase();
-        return word.replaceAll("(?i)[aeiou]","*");
+    private String devowel(String word) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : word.toCharArray()) {
+            if ("aeiou".indexOf(c) >= 0) sb.append('*');
+            else sb.append(c);
+        }
+        return sb.toString();
     }
-
 
 }
